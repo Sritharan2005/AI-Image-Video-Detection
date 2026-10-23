@@ -2,7 +2,10 @@ import io
 import math
 from PIL import Image
 from fastapi.testclient import TestClient
+import pytest
 from aidetector.api import create_app
+
+pytestmark = pytest.mark.model
 
 def test_api_production_and_residual_endpoints():
     app = create_app(backend="ultra")

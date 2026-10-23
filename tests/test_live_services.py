@@ -26,14 +26,10 @@ def test_production_servers():
 
     # Test /predict
     boundary = "----TestBoundary"
-    primary_img = r"C:\Users\admin\OneDrive\Desktop\AI Fake Image and Video dedection\backend\data\validation_eval\REAL\local_real_man.jpg"
-    fallback_img = Path(__file__).resolve().parent.parent / "test_images" / "ai-generated.png"
-    if os.path.exists(primary_img):
-        img_source = Path(primary_img)
-    elif fallback_img.exists():
-        img_source = fallback_img
-    else:
-        pytest.fail("Neither primary validation image nor fallback test_images/ai-generated.png was found.")
+    repo_root = Path(__file__).resolve().parent.parent
+    img_source = repo_root / "test_images" / "ai-generated.png"
+    if not img_source.exists():
+        pytest.fail(f"Required test image not found at: {img_source}")
 
     with open(img_source, "rb") as f:
         img_bytes = f.read()

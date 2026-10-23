@@ -72,7 +72,8 @@ backend/models/*.onnx
 # 6. Evaluation Datasets & Acquisition Data
 # ------------------------------------------------------------------------------
 backend/data/validation_eval/
-backend/data/test_cases/
+backend/data/test_cases/*
+!backend/data/test_cases/ai_man_office_laptop.png
 backend/data/workplace_dataset/
 
 # ------------------------------------------------------------------------------

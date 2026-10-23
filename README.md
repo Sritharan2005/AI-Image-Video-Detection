@@ -1,18 +1,127 @@
-# AI Image Detector
+# DeepGuard — AI Image & Video Detection System
 
-[![CI](https://github.com/lynote-ai/ai-image-detector/actions/workflows/ci.yml/badge.svg)](https://github.com/lynote-ai/ai-image-detector/actions/workflows/ci.yml)
+[![CI](https://github.com/Sritharan2005/AI-Image-Video-Detection/actions/workflows/ci.yml/badge.svg)](https://github.com/Sritharan2005/AI-Image-Video-Detection/actions/workflows/ci.yml)
 
+DeepGuard is a production-grade multi-model ensemble detection platform for synthetic media (AI images and videos). It unifies specialized neural detectors into a synchronized voting architecture with root-mean-square (RMS) confidence aggregation and a real-time React/Vite dashboard.
 
-A small, friendly open-source detector for AI-generated images. It is designed in the
-`yt-dlp` / `rembg` spirit: install it, run one command, get a probability and a
-reproducible report.
+---
 
-> AI image detection is probabilistic. Treat the output as one signal, not as proof.</br>
-**Other Quality Projects**</br>
-AI Humanize Text:https://github.com/lynote-ai/humanize-text</br>
-AI Text Detector:https://github.com/lynote-ai/ai-text-detector</br>
+## System Architecture
 
-## Model Choice
+```
+                    ┌───────────────────────────────────────────────┐
+                    │     Frontend Dashboard (React / Vite)         │
+                    │               Port 5173                       │
+                    └───────────────────────┬───────────────────────┘
+                                            │ Multipart Upload
+                    ┌───────────────────────┴───────────────────────┐
+                    │                                               │
+                    ▼                                               ▼
+    ┌───────────────────────────────┐               ┌───────────────────────────────┐
+    │   DeepGuard Backend API       │               │     Ultra Detector Backend    │
+    │         Port 8000             │               │           Port 8005           │
+    │  - Baseline (EfficientNet-B0) │               │  - OpenCLIP ViT-L/14          │
+    │  - Experimental Face-Crop     │               │  - Sentry ConvNeXt-Small      │
+    │  - Multi-Crop Spatial Pooling │               │  - Nonescape Mini Residual    │
+    └───────────────────────────────┘               └───────────────────────────────┘
+```
+
+- **Detector 1 (Port 8000):** DeepGuard Baseline — full-image EfficientNet-B0 trained on optical vs. generative media.
+- **Detector 2 (Port 8000):** DeepGuard Face-Crop / Multi-Crop — Haar-cascade localization with dynamic spatial window pooling.
+- **Detector 3 (Port 8005):** Ultra Detector Ensemble — multimodal CLIP feature projection blended with ConvNeXt frequency analysis.
+- **Decision Engine (Frontend):** 3-Detector majority consensus voting with RMS winning confidence calculation and calibrated score display.
+
+---
+
+## Fresh Windows Setup Guide
+
+Follow these exact steps to clone, configure, and launch the application on a fresh Windows 10/11 system:
+
+### 1. Prerequisites
+- **Operating System:** Windows 10 or 11 (64-bit)
+- **Python:** 3.10, 3.11, or 3.12 ([python.org](https://www.python.org/downloads/)) — check *"Add python.exe to PATH"* during install.
+- **Node.js:** 18 or higher with npm ([nodejs.org](https://nodejs.org/))
+- **Git:** Installed and available in terminal ([git-scm.com](https://git-scm.com/))
+
+### 2. Clone the Repository
+```powershell
+git clone https://github.com/Sritharan2005/AI-Image-Video-Detection.git
+cd AI-Image-Video-Detection
+```
+
+### 3. Python Virtual Environment Setup
+Open PowerShell in the project directory:
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e ".[api,dev,hf]" -r backend/requirements.txt
+```
+
+### 4. Frontend Dependencies Setup
+```powershell
+npm install
+```
+
+### 5. Model Weights Setup
+1. **DeepGuard EfficientNet-B0 (`backend/models/efficientnet_b0_deepguard.pth`)**:
+   - Checkpoint size: ~16.3 MB, SHA-256: `4ff0c6245d67265cdd0feb212a5028d0df0f69959142a41fa270e976da15b887`
+   - Place this file into the `backend/models/` folder.
+   - *Note:* If weights are absent, the backend launches in degraded mode (`/api/status` reports `awaiting_trained_weights` and `/predict` returns HTTP 503 with an actionable error).
+2. **Ultra Detector Backends (Port 8005)**:
+   - All required models (`ViT-L-14`, `Sentry ConvNeXt`, `Nonescape Mini`) download automatically on first run to standard user caches (`~/.cache/`). No manual file copy needed.
+
+### 6. Start the Entire Application
+Launch all three services simultaneously using the unified launcher:
+- **Using PowerShell:**
+  ```powershell
+  ./start_all.ps1
+  ```
+- **Using Command Prompt:**
+  ```cmd
+  start_all.bat
+  ```
+
+### 7. Access & Health Endpoints
+- **Web UI:** [http://localhost:5173](http://localhost:5173)
+- **DeepGuard Backend Status:** [http://127.0.0.1:8000/api/status](http://127.0.0.1:8000/api/status)
+- **Ultra Detector Health:** [http://127.0.0.1:8005/health](http://127.0.0.1:8005/health)
+
+---
+
+## Testing & Verification
+
+Run the test suites locally to verify installation:
+
+```powershell
+# 1. Run offline unit and validation tests (runs instantly without weights)
+python -m pytest -q -m "not service and not model"
+
+# 2. Run model inference tests (when efficientnet_b0_deepguard.pth is present)
+python -m pytest -q -m model
+
+# 3. Run frontend unit tests
+npm test
+
+# 4. Verify production build
+npm run build
+```
+
+---
+
+## Troubleshooting & Diagnostics
+
+- **Weights Missing (HTTP 503):** If `/predict` returns `503 Service Unavailable`, ensure `efficientnet_b0_deepguard.pth` is placed in `backend/models/`.
+- **Port Conflicts (8000, 8005, or 5173):** Check which process is occupying a port:
+  ```powershell
+  netstat -ano | findstr :8000
+  ```
+  Terminate conflicting PIDs with `taskkill /PID <PID> /F`.
+- **OpenCV Import Errors (`cv2.CascadeClassifier`):** Ensure `opencv-python-headless>=4.8.0,<5.0.0` is installed. Avoid mixed installs of both `opencv-python` and `opencv-python-headless`.
+
+---
+
+## Original CLI & Research Backends
 
 The default backend is **UnivFD / UniversalFakeDetect**: CLIP ViT-L/14 image
 features plus a tiny linear fake/real head. This is a strong practical default
