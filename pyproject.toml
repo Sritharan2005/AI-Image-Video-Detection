@@ -43,6 +43,7 @@ testpaths = ["tests", "backend/tests"]
 addopts = "-m 'not service'"
 markers = [
     "service: Tests that require live external running services on ports 8000/8005",
+    "model: Tests that require the trained DeepGuard EfficientNet-B0 checkpoint (backend/models/efficientnet_b0_deepguard.pth)",
 ]
 
 [tool.hatch.build.targets.wheel]

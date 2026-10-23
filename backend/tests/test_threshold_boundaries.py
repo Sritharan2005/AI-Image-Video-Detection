@@ -16,8 +16,11 @@ from pathlib import Path
 backend_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(backend_dir))
 
+import pytest
 from fastapi.testclient import TestClient
 from app.api import app
+
+pytestmark = pytest.mark.model
 
 client = TestClient(app)
 SAMPLE_IMAGE_PATH = Path(__file__).resolve().parent.parent.parent / "public" / "images" / "sample-fake-woman.jpg"

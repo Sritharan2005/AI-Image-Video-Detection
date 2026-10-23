@@ -18,6 +18,7 @@ import io
 import sys
 from pathlib import Path
 from PIL import Image
+import pytest
 
 backend_dir = Path(__file__).resolve().parent.parent
 if str(backend_dir) not in sys.path:
@@ -93,6 +94,7 @@ def test_aggregation_methods():
     assert abs(max_res["REAL"] - 0.30) < 1e-4
     print("[PASS] test_aggregation_methods passed.")
 
+@pytest.mark.model
 def test_api_multi_crop_query_mode():
     """Confirms /predict?mode=experimental_multi_crop operates and returns crop diagnostics."""
     with open(SAMPLE_IMAGE_PATH, "rb") as f:
@@ -111,6 +113,7 @@ def test_api_multi_crop_query_mode():
     assert "confidence" in data
     print("[PASS] test_api_multi_crop_query_mode passed.")
 
+@pytest.mark.model
 def test_api_dedicated_multi_crop_endpoint():
     """Confirms /predict/multi-crop dedicated endpoint works."""
     with open(SAMPLE_IMAGE_PATH, "rb") as f:
@@ -126,6 +129,7 @@ def test_api_dedicated_multi_crop_endpoint():
     assert data["decision"]["threshold_applied"] == 0.45
     print("[PASS] test_api_dedicated_multi_crop_endpoint passed.")
 
+@pytest.mark.model
 def test_diagnostic_endpoint_three_way():
     """Confirms /predict/diagnostic now outputs all 3 pipelines side-by-side."""
     with open(SAMPLE_IMAGE_PATH, "rb") as f:

@@ -39,6 +39,7 @@ def create_synthetic_test_jpeg(width=256, height=256, color=(120, 150, 180)) -> 
 
 class TestEndToEndApiValidation:
 
+    @pytest.mark.model
     def test_production_checkpoint_sha256_integrity(self):
         """Verifies the production checkpoint exists and strictly matches required SHA-256."""
         assert os.path.exists(MODEL_WEIGHTS_PATH), f"Checkpoint missing at {MODEL_WEIGHTS_PATH}"
@@ -51,6 +52,7 @@ class TestEndToEndApiValidation:
             f"Checkpoint SHA-256 mismatch: {actual_sha} != {REQUIRED_CHECKPOINT_SHA256}"
         )
 
+    @pytest.mark.model
     def test_status_endpoints(self):
         """Verifies GET / and GET /api/status report service ready and weights loaded."""
         res_root = client.get("/")
@@ -66,6 +68,7 @@ class TestEndToEndApiValidation:
         assert status_data["weights_loaded"] is True
         assert status_data["classes"] == ["FAKE", "REAL"]
 
+    @pytest.mark.model
     def test_image_predict_baseline_mode(self):
         """Tests standard baseline full-image inference endpoint."""
         img_bytes = create_synthetic_test_jpeg(300, 300)
@@ -82,6 +85,7 @@ class TestEndToEndApiValidation:
         assert "REAL" in data["probabilities"] and "FAKE" in data["probabilities"]
         assert data["decision"]["threshold_applied"] == DEFAULT_PRODUCTION_THRESHOLD
 
+    @pytest.mark.model
     def test_image_predict_experimental_modes(self):
         """Tests experimental face-crop and multi-crop inference modes."""
         img_bytes = create_synthetic_test_jpeg(320, 240)
@@ -108,6 +112,7 @@ class TestEndToEndApiValidation:
         assert "crops_evaluated" in data_mc
         assert data_mc["crop_count"] >= 1
 
+    @pytest.mark.model
     def test_diagnostic_endpoint(self):
         """Tests multi-view diagnostic comparison endpoint."""
         img_bytes = create_synthetic_test_jpeg(300, 300)
@@ -121,6 +126,17 @@ class TestEndToEndApiValidation:
         assert "experimental_face_crop" in data
         assert "experimental_multi_crop" in data
         assert "comparison" in data
+
+    def test_unloaded_model_service_unavailable(self, monkeypatch):
+        """Verifies HTTP 503 is returned when model weights are not loaded."""
+        from app.predictor import predictor
+        monkeypatch.setattr(predictor, "is_loaded", False)
+        img_bytes = create_synthetic_test_jpeg(100, 100)
+        res = client.post("/predict", files={"file": ("test.jpg", img_bytes, "image/jpeg")})
+        assert res.status_code == 503
+        data = res.json()
+        assert "detail" in data
+        assert "Model weights have not been loaded" in str(data["detail"])
 
     def test_input_validation_errors(self):
         """Tests rejection of invalid extensions, empty files, oversized files, and corrupt bytes."""

@@ -28,7 +28,10 @@ from pathlib import Path
 backend_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(backend_dir))
 
+import pytest
 from app.predictor import predictor
+
+pytestmark = pytest.mark.model
 
 TEST_IMAGE_PATH = backend_dir / "data" / "test_cases" / "ai_man_office_laptop.png"
 

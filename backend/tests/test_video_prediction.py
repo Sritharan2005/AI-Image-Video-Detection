@@ -71,6 +71,7 @@ def generate_synthetic_video_bytes(
 
 class TestVideoPrediction:
 
+    @pytest.mark.model
     def test_checkpoint_hash_preserved(self):
         """Verifies model checkpoint has not been altered."""
         h = hashlib.sha256()
@@ -79,6 +80,7 @@ class TestVideoPrediction:
                 h.update(chunk)
         assert h.hexdigest() == REQUIRED_CHECKPOINT_SHA256
 
+    @pytest.mark.model
     def test_successful_mp4_video_prediction(self):
         """Tests successful frame-based video evaluation on an MP4 file."""
         vid_bytes = generate_synthetic_video_bytes(num_frames=20, fps=10.0, codec="mp4v", ext=".mp4")
@@ -123,6 +125,7 @@ class TestVideoPrediction:
         # Check explanation disclaims temporal manipulation
         assert "temporal manipulation" in data["explanation"] or "temporal" in data["explanation"]
 
+    @pytest.mark.model
     def test_successful_avi_video_prediction(self):
         """Tests successful evaluation on an AVI container."""
         vid_bytes = generate_synthetic_video_bytes(num_frames=12, fps=12.0, codec="MJPG", ext=".avi")
@@ -137,6 +140,7 @@ class TestVideoPrediction:
         assert data["video_metadata"]["frames_sampled"] == 4
         assert len(data["per_frame_predictions"]) == 4
 
+    @pytest.mark.model
     def test_video_aggregation_methods(self):
         """Tests 'mean' and 'max' aggregation methods produce valid results."""
         vid_bytes = generate_synthetic_video_bytes(num_frames=10, fps=10.0)
@@ -159,6 +163,7 @@ class TestVideoPrediction:
         data_max = res_max.json()
         assert data_max["decision"]["aggregation_method"] == "max"
 
+    @pytest.mark.model
     def test_custom_threshold_override(self):
         """Tests that custom threshold alters decision boundary accordingly."""
         vid_bytes = generate_synthetic_video_bytes(num_frames=10, fps=10.0)
