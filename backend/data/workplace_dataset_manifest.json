@@ -1,0 +1,83 @@
+{
+  "dataset_title": "DeepGuard Supplementary Workplace Portrait Dataset (Specification & Manifest)",
+  "version": "1.0.0",
+  "created_at": "2026-10-20",
+  "domain": "Photorealistic Workplace & Office Human Portraits",
+  "objective": "Mitigate domain shift and ImageNet semantic prior bias (laptops/office furniture) causing false negatives on modern AI-generated office portraits.",
+  "target_total_images": 1200,
+  "balance": "50% REAL (600) / 50% FAKE (600)",
+  "split_ratio": {
+    "train": 0.60,
+    "validation": 0.20,
+    "test_held_out": 0.20
+  },
+  "split_counts": {
+    "train": { "real": 360, "fake": 360, "total": 720 },
+    "validation": { "real": 120, "fake": 120, "total": 240 },
+    "test_held_out": { "real": 120, "fake": 120, "total": 240 }
+  },
+  "estimated_storage_mb": 1440.0,
+  "estimated_bandwidth_mb": 1500.0,
+  "hardware_requirements": {
+    "recommended": "NVIDIA T4 or RTX 3060 (16GB RAM, ~15-20 minutes)",
+    "minimum": "8-core CPU (16GB RAM, ~90 minutes)"
+  },
+  "provenance_and_licensing": {
+    "real_sources": [
+      {
+        "source": "Unsplash Business & Work Collection",
+        "license": "Unsplash Free Commercial License",
+        "verification": "EXIF camera metadata check (ISO, shutter, camera model) to ensure authentic optical capture"
+      },
+      {
+        "source": "Pexels Office/Corporate Photography",
+        "license": "Pexels Free Commercial License",
+        "verification": "Photographer attribution and original sensor noise validation"
+      }
+    ],
+    "fake_sources": [
+      {
+        "generator": "Midjourney v6 / v6.1",
+        "license": "CC0 / User-generated prompt assets",
+        "domain_focus": "Photorealistic office, corporate executive, person working on laptop"
+      },
+      {
+        "generator": "FLUX.1 [dev]",
+        "license": "FLUX.1 Non-Commercial / Research License",
+        "domain_focus": "High-fidelity modern office portraits with complex lighting and hands/laptops"
+      },
+      {
+        "generator": "Stable Diffusion 3.5 Large / SDXL",
+        "license": "Stability AI Community License",
+        "domain_focus": "Workplace portraits with varied office backgrounds"
+      },
+      {
+        "generator": "Google Imagen 3 / Gemini",
+        "license": "User-generated evaluation test assets",
+        "domain_focus": "Photorealistic portraits of professionals with laptops"
+      }
+    ]
+  },
+  "leakage_prevention_protocol": {
+    "subject_grouping": "All images of the same individual, same prompt seed, or same photographer session MUST be grouped into the same split.",
+    "perceptual_hash_deduplication": "Every candidate image is filtered using ImageHash (pHash) with threshold Hamming distance < 6 to eliminate near-duplicate crops.",
+    "quarantined_benchmark_cases": [
+      {
+        "filename": "ai_man_office_laptop.png",
+        "assigned_split": "test_held_out",
+        "rationale": "Strictly quarantined in held-out test split to guarantee out-of-sample evaluation parity. Never used in train or validation."
+      }
+    ]
+  },
+  "schema_definition": {
+    "image_id": "Unique string (e.g. 'workplace_real_001')",
+    "split": "'train' | 'val' | 'test'",
+    "label": "'REAL' | 'FAKE'",
+    "class_idx": "0 for FAKE, 1 for REAL",
+    "generator_or_source": "Source platform or generative model family",
+    "license": "License string",
+    "dimensions": [1211, 1672],
+    "sha256": "Hex SHA256 image checksum",
+    "subject_group_id": "Unique ID grouping related session assets"
+  }
+}

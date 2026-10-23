@@ -1,12 +1,106 @@
+# ==============================================================================
+# DeepGuard — .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment & Secrets (NEVER commit credentials, keys, or private tokens)
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+*.crt
+
+# ------------------------------------------------------------------------------
+# 2. Node & Frontend Dependencies, Caches, and Logs
+# ------------------------------------------------------------------------------
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.vite/
+.eslintcache
+
+# ------------------------------------------------------------------------------
+# 3. Build & Distribution Outputs
+# ------------------------------------------------------------------------------
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# ------------------------------------------------------------------------------
+# 4. Python Virtual Environments, Bytecode, & Test Caches
+# ------------------------------------------------------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .pytest_cache/
 .ruff_cache/
-.venv/
-dist/
-build/
+.mypy_cache/
+.coverage
+htmlcov/
 *.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+env/
+ENV/
 .cache/
-ai-image-detector/
-.DS_Store
+
+# ------------------------------------------------------------------------------
+# 5. Model Weights & Large Binary Checkpoints (Store in HuggingFace / S3 / LFS)
+# ------------------------------------------------------------------------------
+*.pth
+*.pt
+*.onnx
+*.safetensors
+*.bin
+*.h5
+*.tflite
+backend/models/*.pth
+backend/models/*.pt
+backend/models/*.onnx
+
+# ------------------------------------------------------------------------------
+# 6. Evaluation Datasets & Acquisition Data
+# ------------------------------------------------------------------------------
+backend/data/validation_eval/
+backend/data/test_cases/
+backend/data/workplace_dataset/
+
+# ------------------------------------------------------------------------------
+# 7. Backup Archives, Logs & Temporary Files
+# ------------------------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bak
+*.tmp
+*.temp
+*.log
 report.csv
+
+# ------------------------------------------------------------------------------
+# 8. Operating System & Editor Files
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+.idea/
+*.sublime-workspace
+*.sublime-project

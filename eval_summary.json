@@ -1,0 +1,62 @@
+[
+  {
+    "Model": "Ultra (20/80) [Production]",
+    "TP": 2,
+    "FP": 1,
+    "TN": 11,
+    "FN": 11,
+    "Precision": 66.67,
+    "Recall": 15.38,
+    "FPR": 8.33,
+    "FNR": 84.62,
+    "F1": 0.25
+  },
+  {
+    "Model": "Ultra (50/50)",
+    "TP": 2,
+    "FP": 1,
+    "TN": 11,
+    "FN": 11,
+    "Precision": 66.67,
+    "Recall": 15.38,
+    "FPR": 8.33,
+    "FNR": 84.62,
+    "F1": 0.25
+  },
+  {
+    "Model": "Ultra (80/20)",
+    "TP": 9,
+    "FP": 8,
+    "TN": 4,
+    "FN": 4,
+    "Precision": 52.94,
+    "Recall": 69.23,
+    "FPR": 66.67,
+    "FNR": 30.77,
+    "F1": 0.6
+  },
+  {
+    "Model": "MultiCrop (Mean)",
+    "TP": 9,
+    "FP": 3,
+    "TN": 9,
+    "FN": 4,
+    "Precision": 75.0,
+    "Recall": 69.23,
+    "FPR": 25.0,
+    "FNR": 30.77,
+    "F1": 0.72
+  },
+  {
+    "Model": "MultiCrop (Max)",
+    "TP": 11,
+    "FP": 3,
+    "TN": 9,
+    "FN": 2,
+    "Precision": 78.57,
+    "Recall": 84.62,
+    "FPR": 25.0,
+    "FNR": 15.38,
+    "F1": 0.8148
+  }
+]

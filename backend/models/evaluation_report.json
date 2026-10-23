@@ -1,0 +1,44 @@
+{
+  "model_architecture": "efficientnet_b0",
+  "dataset": "ComplexDataLab/OpenFake",
+  "dataset_config": "core",
+  "experiment_mode": "scale_5k",
+  "class_mapping": {
+    "0": "FAKE",
+    "1": "REAL"
+  },
+  "preprocessing": {
+    "img_size": 224,
+    "resize": 256,
+    "center_crop": 224,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "evaluation": {
+    "samples": 1500,
+    "accuracy": 0.768,
+    "precision_fake": 0.8615,
+    "recall_fake": 0.6387,
+    "f1_fake": 0.7335
+  },
+  "smoke_test_baseline": {
+    "name": "Smoke Test (N=50)",
+    "train_samples": 200,
+    "val_samples": 50,
+    "test_samples": 50,
+    "test_real": 25,
+    "test_fake": 25,
+    "accuracy": 0.72,
+    "fake_precision": 0.8235,
+    "fake_recall": 0.56,
+    "fake_f1": 0.6667
+  }
+}
